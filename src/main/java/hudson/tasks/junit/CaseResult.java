@@ -296,12 +296,12 @@ public class CaseResult extends TestResult implements Comparable<CaseResult> {
     
    
     /**
-     * Gets the short version of error message
+     * Gets the short version of error message.
      */
     @Exported(visibility=9) 
     public String getShortErrorMessage() {
     	if(getErrorDetails() == null || getErrorDetails().isEmpty() == true) {
-    		return getErrorStackTrace().split("[\\r\\n]+")[0];			// the first line
+    		return getErrorStackTrace().split("[\\r\\n]+")[0];			// Get the first line
     	}else {
     		return getErrorDetails();
     	}

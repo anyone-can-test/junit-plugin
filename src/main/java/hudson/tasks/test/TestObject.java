@@ -28,7 +28,7 @@ import hudson.Util;
 import hudson.Functions;
 import hudson.model.*;
 import hudson.tasks.junit.History;
-import hudson.tasks.junit.Analyze;
+import hudson.tasks.junit.GroupByError;
 import hudson.tasks.junit.TestAction;
 import hudson.tasks.junit.TestResultAction;
 import jenkins.model.Jenkins;
@@ -419,8 +419,8 @@ public abstract class TestObject extends hudson.tasks.junit.TestObject {
         return new History(this);
     }
     
-    public Analyze getAnalyze() {
-    	return new Analyze(this);
+    public GroupByError getGroupByError() {
+    	return new GroupByError(this);
     }
 
     public Object getDynamic(String token, StaplerRequest req,

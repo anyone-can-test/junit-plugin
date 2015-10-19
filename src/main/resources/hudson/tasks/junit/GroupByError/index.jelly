@@ -1,7 +1,7 @@
 <!--
 The MIT License
 
-Copyright (c) 2004-2009, Sun Microsystems, Inc., Tom Huybrechts, Yahoo!, Inc.
+Copyright (c) 2015, Hyunil Shin
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,10 +26,6 @@ THE SOFTWARE.
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson/test" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
   <l:layout title="${%title(it.testObject.displayName)}">
-		<j:set var="start" value="${it.asInt(request.getParameter('start'),0)}"/>
-		<j:set var="end" value="${it.asInt(request.getParameter('end'),start+24)}"/>
-		<j:set var="rangeParameters" value="start=${start}&amp;end=${end+1}"/>
-
 		<st:include from="${it.testObject}" it="${it.testObject}" page="sidepanel.jelly" />
 		<l:main-panel>
 			<H2>${%title(it.testObject.displayName)}</H2>
@@ -37,13 +33,13 @@ THE SOFTWARE.
 	<j:if test="${it.failCount!=0}">
     <table class="pane sortable bigtable">
       <tr>
-        <td class="pane-header">${%Short Error Message}</td>
+        <td class="pane-header">${%Error Message}</td>
         <td class="pane-header">${%Count}</td>
       </tr>
     
-      <j:forEach var="f" items="${it.results}" varStatus="i">
+      <j:forEach var="f" items="${it.groups}" varStatus="i">
      	<tr>
-            <td class="pane"><t:failed-test-list result="${f}" testObject="${it.testObject}"/></td>
+            <td class="pane"><t:failed-tests-group group="${f}" testObject="${it.testObject}"/></td>
      		<td>${f.count}</td>
      	</tr> 
       </j:forEach>

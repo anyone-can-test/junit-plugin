@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2004-2010, Sun Microsystems, Inc., Tom Huybrechts, Yahoo!, Inc., Seiji Sogabe
+ * Copyright (c) 2015, Hyunil Shin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,69 +33,63 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- *
- *
+ * 
+ * Group case results by error message.
  */
-public class Analyze {
+public class GroupByError {
 	private final TestObject testObject;
 
 	/**
-	 * All {@link ErrorMessageResult}
+	 * All {@link GroupedCaseResults}
 	 */
-	private final HashMap<String, ErrorMessageResult> errorMessages;
+	private final HashMap<String, GroupedCaseResults> groups;
 
-	public Analyze(TestObject testObject) {
+	public GroupByError(TestObject testObject) {
 		this.testObject = testObject;
 
-		errorMessages = new HashMap<String, ErrorMessageResult>();
+		groups = new HashMap<String, GroupedCaseResults>();
 		
-		// make error message
-		List<CaseResult> cases = (List<CaseResult>) testObject.getResultInRun(testObject.getRun()).getFailedTests();
-		for(CaseResult cr: cases) {
-			String newErrorMsg = cr.getShortErrorMessage();
-			
-			boolean bSimilar = false;
-			for(String contained: errorMessages.keySet()) {
-				if(StringUtils.getJaroWinklerDistance(newErrorMsg, contained) >= 0.9) {
-					bSimilar = true;
-				
-					// add case to the existing error message result (similar)
-					ErrorMessageResult errMsgResult = errorMessages.get(contained);
-					errMsgResult.add(cr);
-					break;
-				}
-			}
-			if(bSimilar == false) {
-				// add a new error message result
-				ErrorMessageResult errMsgResult = new ErrorMessageResult(newErrorMsg);
-				errMsgResult.add(cr);
-				errorMessages.put(newErrorMsg, errMsgResult);
+		// generate groups
+		List<CaseResult> failedCases = (List<CaseResult>) testObject.getResultInRun(testObject.getRun()).getFailedTests();
+		for(CaseResult cr: failedCases) {
+			add(cr);
+		}
+	}
+	
+	private void add(CaseResult cr) {
+		for(GroupedCaseResults g: groups.values()) {
+			if(g.similar(cr)) {
+				// add case to the existing group
+				g.add(cr);
+				return;
 			}
 		}
 	
+		// add a new group
+		GroupedCaseResults g = new GroupedCaseResults(cr.getShortErrorMessage());
+		g.add(cr);
+		groups.put(cr.getShortErrorMessage(), g);
 	}
-	
 
 	public TestObject getTestObject() {
 		return testObject;
 	}
-
 	
 
 	/**
 	 * 
-	 * @return The set of short error messages (not duplicate)
+	 * @return The list of representative error messages.
 	 */
-	public Set<String> getShortErrorMessageList() {
-		return errorMessages.keySet();
+	public Set<String> getRepresentativeErrorMessages() {
+		return groups.keySet();
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return All {@link GroupedCaseResults}.
 	 */
-    public List<ErrorMessageResult> getResults() {
-        return new ArrayList<ErrorMessageResult>(errorMessages.values());
+    public List<GroupedCaseResults> getGroups() {
+        return new ArrayList<GroupedCaseResults>(groups.values());
     }
 	
 }

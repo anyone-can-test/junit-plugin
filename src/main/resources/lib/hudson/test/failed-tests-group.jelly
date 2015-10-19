@@ -1,7 +1,7 @@
 <!--
 The MIT License
 
-Copyright (c) 20013 Red Hat, Inc.
+Copyright (c) 2015, Hyunil Shin
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,9 @@ THE SOFTWARE.
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   <st:documentation>
-    Display link to the failed test.
-    @since 1.538
-    <st:attribute name="result" type="ErrorMessageResult">
-      Failed test object
+    Display link to the grouped failed tests.
+    <st:attribute name="group" type="GroupedCaseResults">
+      Group object 
     </st:attribute>
     <st:attribute name="testObject" type="TestObject">
       Failed test object
@@ -36,14 +35,11 @@ THE SOFTWARE.
   </st:documentation>
     <st:once>
       <script type="text/javascript">
-      <!-- TODO make sure load doesn't happen every time -->
-      function showFailureSummary(id, cases) {
+      function showFailureSummary(id) {
         var element = document.getElementById(id)
         element.style.display = "";
         document.getElementById(id + "-showlink").style.display = "none";
         document.getElementById(id + "-hidelink").style.display = "";
-
-        //element.innerHTML = cases;
       }
 
       function hideFailureSummary(id) {
@@ -76,22 +72,21 @@ THE SOFTWARE.
       }
     </style>
   </st:once>
-  <j:set var="id" value="${h.jsStringEscape(result.id)}"/>
-  <j:set var="cases" value="${h.jsStringEscape(result.list)}"/>
-  <j:set var="open" value="showFailureSummary('test-${id}', '${cases}')"/>
+  <j:set var="id" value="${h.jsStringEscape(group.id)}"/>
+  <j:set var="open" value="showFailureSummary('test-${id}')"/>
   <j:set var="close" value="hideFailureSummary('test-${id}')"/>
-  <a id="test-${id}-showlink" onclick="${open}" title="${%Show details}">
+  <a id="test-${id}-showlink" onclick="${open}" title="${%Show list}">
     <l:icon class="icon-document-add icon-sm"/>
   </a>
-  <a id="test-${id}-hidelink" onclick="${close}" title="${%Hide details}" style="display:none">
+  <a id="test-${id}-hidelink" onclick="${close}" title="${%Hide lists}" style="display:none">
     <l:icon class="icon-document-delete icon-sm"/>
   </a>
   <st:nbsp/>
-  <st:out value="${result.errorMessage}"/>
+  <st:out value="${group.repErrorMessage}"/>
   <j:set var="p" value="${it.getResultInRun(b)}"/>
   <div id="test-${id}" class="failure-summary" style="display: none;">
       <table>
-      <j:forEach var="f" items="${result.children}" varStatus="i">
+      <j:forEach var="f" items="${group.children}" varStatus="i">
      	<tr>
 	    	<td class="pane"><a href="${app.rootUrl}${testObject.run.url}testReport${f.url}">${f.fullName}</a></td>
      	</tr> 
