@@ -35,7 +35,7 @@ import org.kohsuke.stapler.export.Exported;
  */
 public class GroupedCaseResults {
     private static final Logger LOGGER = Logger.getLogger(GroupedCaseResults.class.getName());
-   
+    
     /**
      * Representative error message for this group, actually one of error messages.
      */
@@ -83,9 +83,9 @@ public class GroupedCaseResults {
     	return cases.size();
     }
 
-    public boolean similar(CaseResult cr) {
+    public boolean similar(CaseResult cr, double minDist) {
     	
-		if(StringUtils.getJaroWinklerDistance(repErrorMessage, cr.getShortErrorMessage()) >= 0.9) {
+		if(StringUtils.getJaroWinklerDistance(repErrorMessage, cr.getShortErrorMessage()) >= minDist) {
 			return true;
 		}else {
 			return false;

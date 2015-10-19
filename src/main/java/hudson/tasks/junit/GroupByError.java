@@ -40,6 +40,12 @@ public class GroupByError {
 	private final TestObject testObject;
 
 	/**
+     * Minimum distance for testing whether they are similar.
+	 * 0.9f is just personal opinion.
+	 */
+	private double minDist = 0.9f;
+	
+	/**
 	 * All {@link GroupedCaseResults}
 	 */
 	private final HashMap<String, GroupedCaseResults> groups;
@@ -58,7 +64,7 @@ public class GroupByError {
 	
 	private void add(CaseResult cr) {
 		for(GroupedCaseResults g: groups.values()) {
-			if(g.similar(cr)) {
+			if(g.similar(cr, minDist)) {
 				// add case to the existing group
 				g.add(cr);
 				return;
@@ -91,5 +97,5 @@ public class GroupByError {
     public List<GroupedCaseResults> getGroups() {
         return new ArrayList<GroupedCaseResults>(groups.values());
     }
-	
+    
 }
